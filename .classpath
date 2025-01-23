@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="librerias/mysql-connector-j-9.0.0.jar"/>
+	<classpathentry kind="lib" path="librerias/jgoodies-common-1.2.0.jar"/>
+	<classpathentry kind="lib" path="librerias/jgoodies-looks-2.4.1.jar"/>
+	<classpathentry kind="lib" path="librerias/jcalendar-1.4.jar"/>
+	<classpathentry kind="lib" path="librerias/licensing-base-4.1.4.jar"/>
+	<classpathentry kind="lib" path="librerias/layout-7.1.9.jar"/>
+	<classpathentry kind="lib" path="librerias/kernel-7.1.9.jar"/>
+	<classpathentry kind="lib" path="librerias/junit-4.6.jar"/>
+	<classpathentry kind="lib" path="librerias/io-7.1.9.jar"/>
+	<classpathentry kind="lib" path="librerias/font-asian-7.2.6.jar"/>
+	<classpathentry kind="lib" path="librerias/commons-math3-3.6.1.jar"/>
+	<classpathentry kind="lib" path="librerias/commons-io-2.11.0.jar"/>
+	<classpathentry kind="lib" path="librerias/commons-codec-1.15.jar"/>
+	<classpathentry kind="lib" path="librerias/commons-7.2.6.jar"/>
+	<classpathentry kind="lib" path="librerias/slf4j-api-1.7.36 (1).jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
