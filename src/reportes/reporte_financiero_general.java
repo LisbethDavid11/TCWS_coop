@@ -20,7 +20,7 @@ import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.UnitValue;
 
 import clases.apotaciones;
-import clases.empleados;
+import clases.socios;
 import clases.prestamos;
 import consultas.consultas_reportes;
 
@@ -30,7 +30,7 @@ public class reporte_financiero_general {
 	    try {
 	        // Instancia de consultas para obtener los datos
 	        consultas_reportes consultas = new consultas_reportes();
-	        List<empleados> empleadosList = consultas.obtenerTodosLosEmpleados();
+	        List<socios> empleadosList = consultas.obtenerTodosLosEmpleados();
 
 	        // Configuración del PDF
 	        PdfWriter writer = new PdfWriter(rutaArchivo);
@@ -50,7 +50,7 @@ public class reporte_financiero_general {
 	                .setTextAlignment(TextAlignment.CENTER)
 	                .setFontSize(14).setBold());
 
-	        for (empleados empleado : empleadosList) {
+	        for (socios empleado : empleadosList) {
 	            // Datos del empleado
 	            document.add(new Paragraph("Empleado: " + empleado.getNombres_empleado() + " " + empleado.getApellidos_empleado()
 	                    + " (ID: " + empleado.getId_empleado() + ")")
@@ -121,7 +121,7 @@ public class reporte_financiero_general {
 	            }
 	            document.add(tablaPrestamos);
 
-	            // Espacio entre empleados
+	            // Espacio entre socios
 	            document.add(new Paragraph("\n"));
 	        }
 

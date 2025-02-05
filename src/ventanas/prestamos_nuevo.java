@@ -493,7 +493,7 @@ public class prestamos_nuevo extends JFrame{
 	
 	//cargar nombres en el cbxnombres y cbxautorizado1 y 2
 	private void cargarNombresEnComboBoxes() {
-	    String sql = "SELECT nombres_empleado FROM empleados";
+	    String sql = "SELECT nombres_empleado FROM socios";
 	    conexion conn = new conexion(); 
 
 	    try (Connection con = conn.conectar();
@@ -520,7 +520,7 @@ public class prestamos_nuevo extends JFrame{
 
 	        if (nombreSeleccionado != null && !nombreSeleccionado.isEmpty()) {
 	            String sql = "SELECT apellidos_empleado, id_empleado, cuenta_empleado, direccion_empleado, cargo_empleado, area_empleado " +
-	                         "FROM empleados WHERE nombres_empleado = ?";
+	                         "FROM socios WHERE nombres_empleado = ?";
 	            conexion conn = new conexion(); 
 
 	            try (Connection con = conn.conectar(); 

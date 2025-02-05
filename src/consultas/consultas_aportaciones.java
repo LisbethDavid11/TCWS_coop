@@ -35,7 +35,7 @@ public class consultas_aportaciones extends conexion {
             while (rs.next()) {
                 apotaciones aportacion = new apotaciones();
                 aportacion.setId_aportaciones(rs.getInt("id_aportaciones"));
-                aportacion.setId_empleado(rs.getInt("id_empleado"));
+                aportacion.setId_empleado(rs.getString("id_empleado"));
                 aportacion.setNombres_empleado(rs.getString("nombres_empleado"));
                 aportacion.setApellidos_empleado(rs.getString("apellidos_empleado"));
                 aportacion.setMes(rs.getString("mes"));
@@ -65,7 +65,7 @@ public class consultas_aportaciones extends conexion {
 	
 	public List<String[]> obtenerEmpleadosActivos() {
 	    List<String[]> empleados = new ArrayList<>();
-	    String sql = "SELECT id_empleado, nombres_empleado, apellidos_empleado FROM empleados";
+	    String sql = "SELECT id_empleado, nombres_empleado, apellidos_empleado FROM socios";
 
 	    try (Connection con = conectar(); PreparedStatement pst = con.prepareStatement(sql); ResultSet rs = pst.executeQuery()) {
 	        while (rs.next()) {
@@ -137,7 +137,7 @@ public class consultas_aportaciones extends conexion {
 	        if (rs.next()) {
 	            aportacion = new apotaciones();
 	            aportacion.setId_aportaciones(rs.getInt("id_aportaciones"));
-	            aportacion.setId_empleado(rs.getInt("id_empleado"));
+	            aportacion.setId_empleado(rs.getString("id_empleado"));
 	            aportacion.setNombres_empleado(rs.getString("nombres_empleado"));
 	            aportacion.setApellidos_empleado(rs.getString("apellidos_empleado"));
 	            aportacion.setMes(rs.getString("mes"));
@@ -207,7 +207,7 @@ public class consultas_aportaciones extends conexion {
 	    String sql = "INSERT INTO aportaciones (id_empleado, nombres_empleado, apellidos_empleado, mes, año, aportacion, interes, cuota, fecha_registro) "
 	               + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	    try (Connection con = conectar(); PreparedStatement pst = con.prepareStatement(sql)) {
-	        pst.setInt(1, aportacion.getId_empleado());
+	        pst.setString(1, aportacion.getId_empleado());
 	        pst.setString(2, aportacion.getNombres_empleado());
 	        pst.setString(3, aportacion.getApellidos_empleado());
 	        pst.setString(4, aportacion.getMes());
@@ -223,39 +223,6 @@ public class consultas_aportaciones extends conexion {
 	    }
 	}
 
-
-	
-	/*public List<apotaciones> obtenerAportacionesPorMesYAño(String mes, String anio) {
-	    List<apotaciones> listaAportaciones = new ArrayList<>();
-	    String sql = "SELECT * FROM aportaciones WHERE mes = ? AND año = ?";
-
-	    try (Connection con = conectar(); PreparedStatement pst = con.prepareStatement(sql)) {
-	        pst.setString(1, mes);
-	        pst.setString(2, anio);
-
-	        ResultSet rs = pst.executeQuery();
-	        while (rs.next()) {
-	            apotaciones aportacion = new apotaciones();
-	            aportacion.setId_aportaciones(rs.getInt("id_aportaciones"));
-	            aportacion.setId_empleado(rs.getInt("id_empleado"));
-	            aportacion.setNombres_empleado(rs.getString("nombres_empleado"));
-	            aportacion.setApellidos_empleado(rs.getString("apellidos_empleado"));
-	            aportacion.setMes(rs.getString("mes"));
-	            aportacion.setAño(rs.getString("año"));
-	            aportacion.setAportacion(rs.getDouble("aportacion"));
-	            aportacion.setInteres(rs.getDouble("interes"));
-	            aportacion.setCuota(rs.getDouble("cuota"));
-	            aportacion.setTotal(rs.getDouble("total"));
-	            aportacion.setFecha_registro(rs.getDate("fecha_registro"));
-	            listaAportaciones.add(aportacion);
-	        }
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
-
-	    return listaAportaciones;
-	}*/
-	
 	
 	public List<apotaciones> obtenerAportacionesPorMesYAño(String mes, String anio) {
 	    List<apotaciones> lista = new ArrayList<>();
@@ -346,7 +313,7 @@ public class consultas_aportaciones extends conexion {
 	            while (rs.next()) {
 	                apotaciones aportacion = new apotaciones();
 	                aportacion.setId_aportaciones(rs.getInt("id_aportaciones"));
-	                aportacion.setId_empleado(rs.getInt("id_empleado"));
+	                aportacion.setId_empleado(rs.getString("id_empleado"));
 	                aportacion.setNombres_empleado(rs.getString("nombres_empleado"));
 	                aportacion.setApellidos_empleado(rs.getString("apellidos_empleado"));
 	                aportacion.setMes(rs.getString("mes"));
@@ -394,7 +361,7 @@ public class consultas_aportaciones extends conexion {
 	                 "AND MONTH(fecha_aprobacion) <= ? AND YEAR(fecha_aprobacion) <= ?";
 
 	    try (Connection con = conectar(); PreparedStatement pst = con.prepareStatement(sql)) {
-	        pst.setString(1, idEmpleado); // Establece el ID del empleados
+	        pst.setString(1, idEmpleado); // Establece el ID del socios
 
 	        // Fecha límite para calcular el plazo
 	        String fechaSeleccionada = anio + "-" + mes + "-01"; // Primer día del mes seleccionado
@@ -450,7 +417,7 @@ public class consultas_aportaciones extends conexion {
 
 	
 	
-	public List<apotaciones> obtenerAportacionesPorEmpleado(int idEmpleado) {
+	public List<apotaciones> obtenerAportacionesPorEmpleado(String idEmpleado) {
 	    List<apotaciones> aportaciones = new ArrayList<>();
 	    conexion con = new conexion();
 	    Connection conexion = null;
@@ -459,7 +426,7 @@ public class consultas_aportaciones extends conexion {
 	        conexion = con.conectar();
 	        String sql = "SELECT * FROM aportaciones WHERE id_empleado = ?";
 	        PreparedStatement ps = conexion.prepareStatement(sql);
-	        ps.setInt(1, idEmpleado);
+	        ps.setString(1, idEmpleado);
 	        ResultSet rs = ps.executeQuery();
 
 	        while (rs.next()) {

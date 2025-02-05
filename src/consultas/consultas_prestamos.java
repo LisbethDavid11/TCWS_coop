@@ -111,7 +111,7 @@ public class consultas_prestamos {
 
 
 	
-	public List<prestamos> obtenerPrestamosPorEmpleado(int idEmpleado) {
+	public List<prestamos> obtenerPrestamosPorEmpleado(String idEmpleado) {
 	    List<prestamos> prestamos = new ArrayList<>();
 	    conexion con = new conexion();
 	    Connection conexion = null;
@@ -120,7 +120,7 @@ public class consultas_prestamos {
 	        conexion = con.conectar();
 	        String sql = "SELECT * FROM prestamos WHERE id_empleado = ?";
 	        PreparedStatement ps = conexion.prepareStatement(sql);
-	        ps.setInt(1, idEmpleado);
+	        ps.setString(1, idEmpleado);
 	        ResultSet rs = ps.executeQuery();
 
 	        while (rs.next()) {

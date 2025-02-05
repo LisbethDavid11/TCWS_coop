@@ -2,10 +2,10 @@ package reportes;
 
 
 import clases.apotaciones;
-import clases.empleados;
+import clases.socios;
 import clases.prestamos;
 import consultas.consultas_aportaciones;
-import consultas.consultas_empleados;
+import consultas.consultas_socios;
 import consultas.consultas_prestamos;
 
 import com.itextpdf.kernel.geom.PageSize;
@@ -22,15 +22,15 @@ import java.util.List;
 
 public class reporte_financiero_socio {
 
-	public void generarReportePDF(int idEmpleadoSeleccionado, String rutaArchivo) {
+	public void generarReportePDF(String idEmpleadoSeleccionado, String rutaArchivo) {
 	    try {
 	        // Instancias de consultas para obtener los datos necesarios
-	        consultas_empleados consultasEmp = new consultas_empleados();
+	        consultas_socios consultasEmp = new consultas_socios();
 	        consultas_aportaciones consultasApor = new consultas_aportaciones();
 	        consultas_prestamos consultasPres = new consultas_prestamos();
 
 	        // Obtener datos del empleado
-	        empleados empleado = consultasEmp.obtenerDatosEmpleadoPorId(idEmpleadoSeleccionado);
+	        socios empleado = consultasEmp.obtenerDatosEmpleadoPorId(idEmpleadoSeleccionado);
 	        if (empleado == null) {
 	            System.out.println("No se encontraron datos para el empleado con ID: " + idEmpleadoSeleccionado);
 	            return;

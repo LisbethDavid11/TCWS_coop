@@ -43,7 +43,7 @@ public class encabezado_documentos {
                     .setTextAlignment(TextAlignment.CENTER)
                     .setBold();
 
-            Paragraph address = new Paragraph("Col. La Ceibita \nDanli, El Paraíso, Honduras")
+            /*Paragraph address = new Paragraph("Col. La Ceibita \nDanli, El Paraíso, Honduras")
                     .setFontSize(12)
                     .setTextAlignment(TextAlignment.CENTER);
 
@@ -53,7 +53,7 @@ public class encabezado_documentos {
 
             Paragraph correo = new Paragraph("Correo: admin@tcws.edu.hn \n")
                     .setFontSize(12)
-                    .setTextAlignment(TextAlignment.CENTER);
+                    .setTextAlignment(TextAlignment.CENTER);*/
 
             // Obtener fecha y hora actual
             LocalDateTime now = LocalDateTime.now();
@@ -66,9 +66,9 @@ public class encabezado_documentos {
 
             // Agregar elementos al documento
             document.add(header);
-            document.add(address);
-            document.add(phone);
-            document.add(correo);
+            //document.add(address);
+            //document.add(phone);
+           // document.add(correo);
             document.add(fechaHora);
             document.add(new Paragraph("\n")); // Espacio extra después del encabezado
 

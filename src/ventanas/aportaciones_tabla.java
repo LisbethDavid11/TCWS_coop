@@ -324,9 +324,9 @@ public class aportaciones_tabla extends JFrame{
 
         if (exito) {
             JOptionPane.showMessageDialog(this, "Los registros se eliminaron correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-
-            // Actualizar la tabla eliminando la fila
             modeloTabla.removeRow(filaSeleccionada);
+            cargarDatos();
+            
         } else {
             JOptionPane.showMessageDialog(this, "Ocurrió un error al intentar eliminar los registros.", "Error", JOptionPane.ERROR_MESSAGE);
         }

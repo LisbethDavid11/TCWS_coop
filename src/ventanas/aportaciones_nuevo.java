@@ -180,7 +180,7 @@ public class aportaciones_nuevo extends JFrame {
         btnguardar.setToolTipText("Guardar registro");
         btnguardar.setFont(new Font("Tahoma", Font.BOLD, 10));
         btnguardar.setBackground(UIManager.getColor("Button.highlight"));
-        btnguardar.setBounds(333, 33, 90, 23);
+        btnguardar.setBounds(355, 17, 90, 23);
         panelbotones.add(btnguardar);
         
         btnImprimir = new JButton("Imprimir");
@@ -423,11 +423,11 @@ public class aportaciones_nuevo extends JFrame {
 		    // Limpia la tabla antes de mostrar resultados
 		    modeloTabla.setRowCount(0);
 
-		    // Recupera los empleados activos
+		    // Recupera los socios activos
 		    List<String[]> empleados = consultas.obtenerEmpleadosActivos();
 
 		    if (empleados == null || empleados.isEmpty()) {
-		        JOptionPane.showMessageDialog(this, "No se encontraron empleados activos", 
+		        JOptionPane.showMessageDialog(this, "No se encontraron socios activos", 
 		                                      "Advertencia", JOptionPane.WARNING_MESSAGE);
 		        return;
 		    }
@@ -487,7 +487,7 @@ public class aportaciones_nuevo extends JFrame {
 		    for (int i = 0; i < filas; i++) {
 		        apotaciones aportacion = new apotaciones();
 		        try {
-		            aportacion.setId_empleado(Integer.parseInt(modeloTabla.getValueAt(i, 1).toString())); // ID Empleado
+		            aportacion.setId_empleado(modeloTabla.getValueAt(i, 1).toString()); // ID Empleado
 		            aportacion.setNombres_empleado(modeloTabla.getValueAt(i, 2).toString()); // Nombres
 		            aportacion.setApellidos_empleado(modeloTabla.getValueAt(i, 3).toString()); // Apellidos
 		            aportacion.setMes(mesSeleccionado); // Mes en texto
@@ -534,9 +534,9 @@ public class aportaciones_nuevo extends JFrame {
 
 		        modeloTabla.addRow(new Object[]{
 		            detalle.getId_aportaciones(),        // No. (id clave primaria)
-		            detalle.getId_empleado(),           // Código del empleados
-		            detalle.getNombres_empleado(),      // Nombres del empleados
-		            detalle.getApellidos_empleado(),    // Apellidos del empleados
+		            detalle.getId_empleado(),           // Código del socios
+		            detalle.getNombres_empleado(),      // Nombres del socios
+		            detalle.getApellidos_empleado(),    // Apellidos del socios
 		            String.format("%.2f", aportacion),  // Aportación
 		            String.format("%.2f", interes),     // Interés
 		            String.format("%.2f", cuota),       // Cuota
@@ -587,7 +587,7 @@ public class aportaciones_nuevo extends JFrame {
 
 		    // Validar si hay filas en el modelo de la tabla
 		    if (modeloTabla.getRowCount() == 0) {
-		        JOptionPane.showMessageDialog(this, "No hay empleados en la tabla.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+		        JOptionPane.showMessageDialog(this, "No hay socios en la tabla.", "Advertencia", JOptionPane.WARNING_MESSAGE);
 		        return;
 		    }
 

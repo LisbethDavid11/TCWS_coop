@@ -2,7 +2,7 @@ package clases;
 
 public class apotaciones {
 	int id_aportaciones;               
-    int id_empleado;
+    String id_empleado;
     String nombres_empleado;
     String apellidos_empleado;
     String mes;                        
@@ -20,10 +20,14 @@ public class apotaciones {
 	public void setId_aportaciones(int id_aportaciones) {
 		this.id_aportaciones = id_aportaciones;
 	}
-	public int getId_empleado() {
+	
+	
+	
+	
+	public String getId_empleado() {
 		return id_empleado;
 	}
-	public void setId_empleado(int id_empleado) {
+	public void setId_empleado(String id_empleado) {
 		this.id_empleado = id_empleado;
 	}
 	public String getNombres_empleado() {

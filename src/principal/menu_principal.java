@@ -8,6 +8,7 @@ import java.awt.Image;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -30,24 +31,27 @@ import javax.swing.Timer;
 import javax.swing.UIManager;
 
 import clases.apotaciones;
-import clases.empleados;
 import clases.prestamos;
+import clases.socios;
 import consultas.consultas_aportaciones;
-import consultas.consultas_empleados;
-import consultas.consultas_prestamos;
+import consultas.consultas_reportes;
+import consultas.consultas_socios;
 import reportes.reporte_aportaciones_mensual;
 import reportes.reporte_financiero_general;
 import reportes.reporte_financiero_socio;
+import reportes.reporte_general_anual_ext;
+import reportes.reporte_general_mensual;
+import reportes.reporte_prestamos_mensual;
 import ventanas.aportaciones_nuevo;
 import ventanas.aportaciones_tabla;
 import ventanas.areas_nuevo;
 import ventanas.areas_tabla;
 import ventanas.cargos_nuevo;
 import ventanas.cargos_tabla;
-import ventanas.cooperativistas_nuevo;
-import ventanas.cooperativistas_tabla;
 import ventanas.prestamos_nuevo;
 import ventanas.prestamos_tabla;
+import ventanas.socios_nuevo;
+import ventanas.socios_tabla;
 
 
 
@@ -173,7 +177,7 @@ public class menu_principal extends JFrame{
 		mntmNewMenuItem.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 		mntmNewMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				cooperativistas_tabla tabla = new cooperativistas_tabla();
+				socios_tabla tabla = new socios_tabla();
 		 		tabla.setVisible(true);
 		 		tabla.setLocationRelativeTo(null);
 				tabla.construirTabla();
@@ -187,7 +191,7 @@ public class menu_principal extends JFrame{
 		mntmNewMenuItem_1.setBackground(UIManager.getColor("Button.highlight"));
 		mntmNewMenuItem_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				cooperativistas_nuevo nuevo = new cooperativistas_nuevo();
+				socios_nuevo nuevo = new socios_nuevo();
 				nuevo.setVisible(true);
 				nuevo.setLocationRelativeTo(null);
 				nuevo.btnactualizar.setVisible(false);
@@ -282,18 +286,18 @@ public class menu_principal extends JFrame{
 		JMenuItem mntmNewMenuItem_1_1_1_1_4 = new JMenuItem("Reporte estado financiero de un socio");
 		mntmNewMenuItem_1_1_1_1_4.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
-		        // Obtener lista de empleados desde consultas_empleados
-		        consultas_empleados consultasEmpleados = new consultas_empleados();
-		        List<empleados> empleados = consultasEmpleados.obtenerNombresEmpleados();
+		        // Obtener lista de socios desde consultas_socios
+		        consultas_socios consultasEmpleados = new consultas_socios();
+		        List<socios> empleados = consultasEmpleados.obtenerNombresEmpleados();
 
 		        if (empleados.isEmpty()) {
-		            JOptionPane.showMessageDialog(null, "No hay empleados registrados", "Error", JOptionPane.ERROR_MESSAGE);
+		            JOptionPane.showMessageDialog(null, "No hay socios registrados", "Error", JOptionPane.ERROR_MESSAGE);
 		            return;
 		        }
 
-		        // Crear JComboBox con los nombres de empleados
+		        // Crear JComboBox con los nombres de socios
 		        JComboBox<String> comboEmpleados = new JComboBox<>();
-		        for (empleados emp : empleados) {
+		        for (socios emp : empleados) {
 		            comboEmpleados.addItem(emp.getNombres_empleado() + " " + emp.getApellidos_empleado());
 		        }
 
@@ -308,7 +312,7 @@ public class menu_principal extends JFrame{
 
 		        if (resultado == JOptionPane.OK_OPTION) {
 		            String nombreSeleccionado = (String) comboEmpleados.getSelectedItem();
-		            empleados empleadoSeleccionado = empleados.stream()
+		            socios empleadoSeleccionado = empleados.stream()
 		                    .filter(emp -> (emp.getNombres_empleado() + " " + emp.getApellidos_empleado()).equals(nombreSeleccionado))
 		                    .findFirst()
 		                    .orElse(null);
@@ -463,12 +467,71 @@ public class menu_principal extends JFrame{
 		mnReportesVarios.setFont(new Font("Segoe UI", Font.PLAIN, 16));
 		menuBar.add(mnReportesVarios);
 		
-		JMenuItem mntmNewMenuItem_1_1_1_1_2_2 = new JMenuItem("Reporte de préstamos general");
+		JMenuItem mntmNewMenuItem_1_1_1_1_2_2 = new JMenuItem("Reporte mensual de préstamos ");
+		mntmNewMenuItem_1_1_1_1_2_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			    // Opciones para los meses
+			    String[] meses = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", 
+			                      "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
+			    int añoActual = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR);
+
+			    // Crear JComboBox para meses y JTextField para el año
+			    JComboBox<String> comboMes = new JComboBox<>(meses);
+			    JTextField txtAnio = new JTextField(String.valueOf(añoActual)); // Año actual por defecto
+
+			    // Crear panel para JOptionPane
+			    JPanel panel = new JPanel();
+			    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+			    panel.add(new JLabel("Seleccione el mes:"));
+			    panel.add(comboMes);
+			    panel.add(Box.createVerticalStrut(10)); // Espacio entre componentes
+			    panel.add(new JLabel("Ingrese el año:"));
+			    panel.add(txtAnio);
+
+			    // Mostrar el JOptionPane
+			    int resultado = JOptionPane.showConfirmDialog(null, panel, "Seleccionar Mes y Año", 
+			                                                  JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+			    if (resultado == JOptionPane.OK_OPTION) {
+			        try {
+			            // Obtener valores seleccionados
+			            int mesSeleccionado = comboMes.getSelectedIndex() + 1; // Mes en formato 1-12
+			            int añoSeleccionado = Integer.parseInt(txtAnio.getText().trim());
+
+			            // Validar año ingresado
+			            if (añoSeleccionado < 2025) {
+			                JOptionPane.showMessageDialog(null, "El año debe ser 2025 o posterior.", "Error", JOptionPane.ERROR_MESSAGE);
+			                return;
+			            }
+
+			            // Realizar consulta de préstamos
+			            consultas_reportes consultas = new consultas_reportes();
+			            List<prestamos> prestamos = consultas.obtenerPrestamosMensuales(mesSeleccionado, añoSeleccionado);
+
+			            // Validar si hay datos
+			            if (prestamos.isEmpty()) {
+			                JOptionPane.showMessageDialog(null, "No hay datos para el mes y año seleccionados.", 
+			                                              "Información", JOptionPane.INFORMATION_MESSAGE);
+			                return;
+			            }
+
+			            // Generar el reporte
+			            reporte_prestamos_mensual reporte = new reporte_prestamos_mensual();
+			            reporte.mostrarDialogoYGenerarReporte(prestamos);
+
+			        } catch (NumberFormatException ex) {
+			            JOptionPane.showMessageDialog(null, "Por favor ingrese un año válido.", "Error", JOptionPane.ERROR_MESSAGE);
+			        }
+			    }
+			}
+
+		});
+
 		mntmNewMenuItem_1_1_1_1_2_2.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 		mntmNewMenuItem_1_1_1_1_2_2.setBackground(Color.WHITE);
 		mnReportesVarios.add(mntmNewMenuItem_1_1_1_1_2_2);
 		
-		JMenuItem mntmNewMenuItem_1_1_1_1_2_1 = new JMenuItem("Reporte de aportaciones mensual");
+		JMenuItem mntmNewMenuItem_1_1_1_1_2_1 = new JMenuItem("Reporte mensual de aportaciones ");
 		mntmNewMenuItem_1_1_1_1_2_1.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 		        // Opciones de meses
@@ -545,12 +608,96 @@ public class menu_principal extends JFrame{
 		mntmNewMenuItem_1_1_1_1_2_1.setBackground(Color.WHITE);
 		mnReportesVarios.add(mntmNewMenuItem_1_1_1_1_2_1);
 		
-		JMenuItem mntmNewMenuItem_1_1_1_1_2 = new JMenuItem("Reporte mensual");
+		JMenuItem mntmNewMenuItem_1_1_1_1_2 = new JMenuItem("Reporte general mensual");
+		mntmNewMenuItem_1_1_1_1_2.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        // Opciones de meses
+		        String[] meses = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
+		        int anioActual = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR);
+
+		        // Crear JComboBox para el mes y JTextField para el año
+		        JComboBox<String> comboMes = new JComboBox<>(meses);
+		        JTextField txtAnio = new JTextField(String.valueOf(anioActual));
+
+		        // Crear panel para el JOptionPane
+		        JPanel panel = new JPanel();
+		        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		        panel.add(new JLabel("Seleccione el mes:"));
+		        panel.add(comboMes);
+		        panel.add(Box.createVerticalStrut(10));
+		        panel.add(new JLabel("Ingrese el año:"));
+		        panel.add(txtAnio);
+
+		        // Mostrar el JOptionPane
+		        int resultadoDialogo = JOptionPane.showConfirmDialog(null, panel, "Generar Reporte Mensual", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		        if (resultadoDialogo != JOptionPane.OK_OPTION) {
+		            return; // Cancelar si el usuario no presiona OK
+		        }
+
+		        // Obtener los valores seleccionados
+		        int mesSeleccionado = comboMes.getSelectedIndex() + 1;
+		        String anioSeleccionado = txtAnio.getText().trim();
+
+		        if (anioSeleccionado.isEmpty() || !anioSeleccionado.matches("\\d{4}")) {
+		            JOptionPane.showMessageDialog(null, "Ingrese un año válido.", "Error", JOptionPane.ERROR_MESSAGE);
+		            return;
+		        }
+
+		        // Configurar JFileChooser
+		        JFileChooser fileChooser = new JFileChooser();
+		        fileChooser.setDialogTitle("Guardar Reporte General Mensual");
+		        fileChooser.setSelectedFile(new File("Reporte_general_mensual_" + meses[mesSeleccionado - 1] + "_" + anioSeleccionado + ".pdf"));
+
+		        // Mostrar diálogo para seleccionar ubicación del archivo
+		        int resultado = fileChooser.showSaveDialog(null);
+		        if (resultado == JFileChooser.APPROVE_OPTION) {
+		            File archivo = fileChooser.getSelectedFile();
+
+		            // Validar si el archivo ya existe
+		            if (archivo.exists()) {
+		                int opcionSobrescribir = JOptionPane.showConfirmDialog(null,
+		                        "El archivo ya existe. ¿Desea sobrescribirlo?", "Confirmación",
+		                        JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+
+		                if (opcionSobrescribir != JOptionPane.YES_OPTION) {
+		                    return; // Cancelar si no desea sobrescribir
+		                }
+		            }
+
+		            // Llamar al método para generar el reporte
+		            reporte_general_mensual reporte = new reporte_general_mensual();
+		            reporte.generarReporteMensualPDF(mesSeleccionado, Integer.parseInt(anioSeleccionado), archivo.getAbsolutePath());
+
+		            // Abrir el archivo en Microsoft Edge
+		            try {
+		                Runtime.getRuntime().exec("cmd /c start msedge \"" + archivo.getAbsolutePath() + "\"");
+		            } catch (Exception ex) {
+		                JOptionPane.showMessageDialog(null, "No se pudo abrir el archivo en Microsoft Edge.", "Error", JOptionPane.ERROR_MESSAGE);
+		                ex.printStackTrace();
+		            }
+		        }
+		    }
+		});
+
+
 		mntmNewMenuItem_1_1_1_1_2.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 		mntmNewMenuItem_1_1_1_1_2.setBackground(Color.WHITE);
 		mnReportesVarios.add(mntmNewMenuItem_1_1_1_1_2);
 		
-		JMenuItem mntmTablaDeRegistros_2_1_2 = new JMenuItem("Reporte anual");
+		JMenuItem mntmTablaDeRegistros_2_1_2 = new JMenuItem("Reporte general anual");
+		mntmTablaDeRegistros_2_1_2.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        String anio = JOptionPane.showInputDialog(null, "Ingrese el año:", "Generar Reporte Anual", JOptionPane.QUESTION_MESSAGE);
+		        
+		        if (anio != null && anio.matches("\\d{4}")) {
+		            new reporte_general_anual_ext().generarReporteAnualPDF(
+		                Integer.parseInt(anio), 
+		                "reporte_general_" + anio + ".pdf"
+		            );
+		        }
+		    }
+		});
+
 		mntmTablaDeRegistros_2_1_2.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 		mntmTablaDeRegistros_2_1_2.setBackground(Color.WHITE);
 		mnReportesVarios.add(mntmTablaDeRegistros_2_1_2);
@@ -694,7 +841,7 @@ public class menu_principal extends JFrame{
 	    consultas_roles consultas = new consultas_roles();
 	    
 	    // Consulta cada permiso para este usuario
-	    boolean empleados = consultas.tienePermiso(nombreUsuario, "permisos_empleados");
+	    boolean socios = consultas.tienePermiso(nombreUsuario, "permisos_empleados");
 	    boolean ausenciaLaboral = consultas.tienePermiso(nombreUsuario, "permisos_ausencia_laboral");
 	    boolean incapacidades = consultas.tienePermiso(nombreUsuario, "permisos_incapacidades");
 	    boolean vacaciones = consultas.tienePermiso(nombreUsuario, "permisos_vacaciones");
@@ -705,7 +852,7 @@ public class menu_principal extends JFrame{
 	    boolean usuarios = consultas.tienePermiso(nombreUsuario, "permisos_usuarios");
 
 	    // Deshabilitar menús según permisos
-	    menu_empleados.setEnabled(empleados);
+	    menu_empleados.setEnabled(socios);
 	    menu_permisos.setEnabled(ausenciaLaboral);
 	    menu_incapacidades.setEnabled(incapacidades);
 	    menu_vacaciones.setEnabled(vacaciones);
