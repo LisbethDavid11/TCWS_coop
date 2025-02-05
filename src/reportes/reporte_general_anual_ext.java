@@ -175,12 +175,26 @@ public class reporte_general_anual_ext {
 	        table.addCell(new Paragraph(formatearNumero(totalMontoPagar)).setBold().setFontSize(9)); 
 	        table.addCell(new Paragraph(formatearNumero(totalAcumulado)).setBold().setFontSize(9)); 
 
-	   
+	        // Pasar correctamente los totales a la tabla de Totales Generales
+	        Map<String, Object> totalesGenerales = new HashMap<>();
+	        totalesGenerales.put("cantidad_prestamos", contador - 1);
+	        totalesGenerales.put("total_aportaciones", totalAportaciones); // Total de la columna "Total Aportaciones"
+	        totalesGenerales.put("total_mensual_prestamos", totalMontoPagar); // Total de la columna "Monto Total a Pagar"
+	        totalesGenerales.put("total_prestamos", totalMontoSolicitado); // Total de la columna "Monto Solicitado"
+
+	        
+	        
+	        
 	        document.add(table);
-	        agregarTablaTotalesGenerales(document, consultas.obtenerTotalesGenerales(anio));
+	        //agregarTablaTotalesGenerales(document, consultas.obtenerTotalesGenerales(anio));
+	        agregarTablaTotalesGenerales(document, totalesGenerales);
 
 	        document.close();
 	        Desktop.getDesktop().open(archivo);
+	        
+	        
+	     
+
 
 	    } catch (Exception e) {
 	        e.printStackTrace();
@@ -210,6 +224,9 @@ public class reporte_general_anual_ext {
             return "0.00";
         }
     }
+    
+    
+    
 
     
     private void agregarTablaTotalesGenerales(Document document, Map<String, Object> totalesGenerales) {
@@ -218,25 +235,23 @@ public class reporte_general_anual_ext {
         Table tablaTotales = new Table(new float[]{4, 2, 2});
         tablaTotales.setWidth(UnitValue.createPercentValue(60));
 
-        // **Tomando valores directamente de la tabla de Totales**
-        BigDecimal totalAportaciones = convertirBigDecimal(totalesGenerales.get("total_aportaciones")); // Debe coincidir con "Aportación Mensual"
-        BigDecimal totalMensualPrestamos = convertirBigDecimal(totalesGenerales.get("total_mensual_prestamos")); // Debe coincidir con "Monto Total a Pagar"
-        BigDecimal totalPrestamos = convertirBigDecimal(totalesGenerales.get("total_prestamos")); // Debe coincidir con "Monto Solicitado"
+        // **Tomamos los valores directamente de la fila de Totales**
+        BigDecimal totalAportaciones = convertirBigDecimal(totalesGenerales.get("total_aportaciones")); // "Total Aportaciones"
+        BigDecimal totalMensualPrestamos = convertirBigDecimal(totalesGenerales.get("total_mensual_prestamos")); // "Monto Total a Pagar"
+        BigDecimal totalPrestamos = convertirBigDecimal(totalesGenerales.get("total_prestamos")); // "Monto Solicitado"
 
-        // **Realizando los cálculos correctos**
-        BigDecimal totalIntereses = totalMensualPrestamos.subtract(totalPrestamos); // Total Intereses = Monto Total a Pagar - Monto Solicitado
+        // **Cálculo de intereses y gastos administrativos**
+        BigDecimal totalIntereses = totalMensualPrestamos.subtract(totalPrestamos); // Intereses = Monto Total a Pagar - Monto Solicitado
         BigDecimal gastosAdministrativos = totalIntereses.multiply(new BigDecimal("0.10")); // 10% de los intereses
-        BigDecimal totalGlobal = totalAportaciones.add(totalPrestamos).add(totalIntereses); // Total Global = (Total Aportaciones + Total Préstamos + Total Intereses)
+        BigDecimal totalGlobal = totalAportaciones.add(totalPrestamos).add(totalIntereses); // Total Global
 
         String[][] totalesDatos = {
             {"Cantidad de préstamos aprobados durante el año", String.valueOf(totalesGenerales.get("cantidad_prestamos")), ""},
-            {"Total anual de aportaciones por socio", "L " + formatearNumero(totalAportaciones), "L " + formatearNumero(totalAportaciones)}, // **Coincide con "Aportación Mensual"**
-            {"Total anual de lo mensual pagado en préstamos por los socios", "L " + formatearNumero(totalMensualPrestamos), "L " + formatearNumero(totalMensualPrestamos)}, // **Coincide con "Monto Total a Pagar"**
-            {"Total anual de préstamos que ha brindado la cooperativa", "L " + formatearNumero(totalPrestamos), "L " + formatearNumero(totalPrestamos)}, // **Coincide con "Monto Solicitado"**
+            {"Total anual de aportaciones por socio", "L " + formatearNumero(totalAportaciones), "L " + formatearNumero(totalAportaciones)}, 
+            {"Total anual de lo mensual pagado en préstamos por los socios", "L " + formatearNumero(totalMensualPrestamos), "L " + formatearNumero(totalMensualPrestamos)}, 
+            {"Total anual de préstamos que ha brindado la cooperativa", "L " + formatearNumero(totalPrestamos), "L " + formatearNumero(totalPrestamos)}, 
             {"Total anual de intereses", "L " + formatearNumero(totalIntereses), "L " + formatearNumero(totalIntereses)},
-            {"El 10% para gastos administrativos de la cooperativa obtenidos de los intereses", 
-             "L " + formatearNumero(gastosAdministrativos), 
-             "L " + formatearNumero(totalIntereses.subtract(gastosAdministrativos))},
+            {"El 10% para gastos administrativos de la cooperativa obtenidos de los intereses", "L " + formatearNumero(gastosAdministrativos), "L " + formatearNumero(totalIntereses.subtract(gastosAdministrativos))},
             {"Total global de la cooperativa", "L " + formatearNumero(totalGlobal), "L " + formatearNumero(totalGlobal)}
         };
 
@@ -248,6 +263,7 @@ public class reporte_general_anual_ext {
 
         document.add(tablaTotales);
     }
+
 
 
 
