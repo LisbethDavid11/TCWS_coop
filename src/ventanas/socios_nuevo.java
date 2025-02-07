@@ -670,6 +670,19 @@ public class socios_nuevo extends JFrame{
 		        JOptionPane.showMessageDialog(null, "Debe seleccionar un cargo", "Advertencia", JOptionPane.WARNING_MESSAGE);
 		        return false;
 		    }
+		    if (cbxestado_civil.getSelectedItem() == null) {
+		        JOptionPane.showMessageDialog(null, "Debe seleccionar un estado civil", "Advertencia", JOptionPane.WARNING_MESSAGE);
+		        return false;
+		    }
+		    if (cbxarea.getSelectedItem() == null) {
+		        JOptionPane.showMessageDialog(null, "Debe seleccionar un área", "Advertencia", JOptionPane.WARNING_MESSAGE);
+		        return false;
+		    }
+		    if (cbxcargo.getSelectedItem() == null) {
+		        JOptionPane.showMessageDialog(null, "Debe seleccionar un cargo", "Advertencia", JOptionPane.WARNING_MESSAGE);
+		        return false;
+		    }
+
 
 		    return true;
 		}
@@ -975,12 +988,25 @@ public class socios_nuevo extends JFrame{
 		        empleadoActualizado.setApellidos_empleado(apellidosEmpleado);
 		        empleadoActualizado.setSexo_empleado(sexoEmpleado);
 		        empleadoActualizado.setNacimiento_empleado(fecha_nacimiento.getDate());
-		        empleadoActualizado.setCivil_empleado(cbxestado_civil.getSelectedItem().toString());
+		        //empleadoActualizado.setCivil_empleado(cbxestado_civil.getSelectedItem().toString());
+		        Object estadoCivilSeleccionado = cbxestado_civil.getSelectedItem();
+		        empleadoActualizado.setCivil_empleado(estadoCivilSeleccionado != null ? estadoCivilSeleccionado.toString() : "");
+
+		        
+		        
 		        empleadoActualizado.setDireccion_empleado(direccionEmpleado);
 		        empleadoActualizado.setTel_empleado(telefonoEmpleado);
 		        empleadoActualizado.setCorreo_empleado(correoEmpleado);
-		        empleadoActualizado.setCargo_empleado(cbxcargo.getSelectedItem().toString());
-		        empleadoActualizado.setArea_empleado(cbxarea.getSelectedItem().toString());
+		        //empleadoActualizado.setCargo_empleado(cbxcargo.getSelectedItem().toString());
+		        Object cargoSeleccionado = cbxcargo.getSelectedItem();
+		        empleadoActualizado.setCargo_empleado(cargoSeleccionado != null ? cargoSeleccionado.toString() : "");
+
+		        //empleadoActualizado.setArea_empleado(cbxarea.getSelectedItem().toString());
+		        Object areaSeleccionada = cbxarea.getSelectedItem();
+		        empleadoActualizado.setArea_empleado(areaSeleccionada != null ? areaSeleccionada.toString() : "");
+
+		        
+		        
 		        empleadoActualizado.setInicio_empleado(fecha_inicio.getDate());
 		        empleadoActualizado.setRenuncia_empleado(fecha_renuncia.getDate());
 		        empleadoActualizado.setFotografia_empleado(txtruta.getText().trim());

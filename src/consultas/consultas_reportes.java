@@ -216,27 +216,29 @@ public class consultas_reportes extends conexion {
         List<Map<String, Object>> reporte = new ArrayList<>();
 
         String query = "SELECT " +
-                       "    s.id_empleado AS codigo_socio, " +
-                       "    CONCAT_WS(' ', COALESCE(s.nombres_empleado, ''), COALESCE(s.apellidos_empleado, '')) AS nombre_completo, " +
-                       "    COALESCE(a.aportacion, 0.00) AS aportacion_mensual, " +
-                       "    COALESCE(a.aportacion * 11, 0.00) AS total_aportaciones, " +
-                       "    COALESCE((a.aportacion / (SELECT SUM(aportacion) FROM aportaciones WHERE año = ?)) * 100, 0) AS porcentaje_dividendos, " +
-                       "    ROUND((a.aportacion * 0.10), 2) AS total_dividendos, " +
-                       "    p.fecha_aprobacion AS fecha_solicitud, " +
-                       "    COALESCE(p.monto_solicitado, 0.00) AS monto_solicitado, " +
-                       "    COALESCE(p.plazo_pago, 0) AS plazo_meses, " +
-                       "    COALESCE(p.tasa_interes, 0) AS tasa_interes, " +
-                       "    ROUND(COALESCE(p.monto_solicitado * p.tasa_interes / 100, 0.00), 2) AS total_interes, " +
-                       "    ROUND(COALESCE(p.letra_mensual, 0.00), 2) AS pago_mensual, " +
-                       "    ROUND(COALESCE(p.monto_solicitado + (p.monto_solicitado * p.tasa_interes / 100), 0.00), 2) AS monto_total_pagar, " +
-                       "    ROUND(COALESCE((p.monto_solicitado * p.tasa_interes / 100), 0.00), 2) AS total_acumulado " +
-                       "FROM socios s " +
-                       "LEFT JOIN aportaciones a ON s.id_empleado = a.id_empleado AND a.año = ? " +
-                       "LEFT JOIN prestamos p ON s.id_empleado = p.id_empleado AND YEAR(p.fecha_aprobacion) = ? " +
-                       "GROUP BY s.id_empleado, s.nombres_empleado, s.apellidos_empleado, " +
-                       "         p.fecha_aprobacion, p.monto_solicitado, p.plazo_pago, p.tasa_interes, a.aportacion, " +
-                       "         p.letra_mensual " + 
-                       "ORDER BY s.id_empleado ASC";
+                "    s.id_empleado AS codigo_socio, " +
+                "    CONCAT_WS(' ', COALESCE(s.nombres_empleado, ''), COALESCE(s.apellidos_empleado, '')) AS nombre_completo, " +
+                "    COALESCE(a.aportacion, 0.00) AS aportacion_mensual, " +
+                "    s.inicio_empleado AS inicio_empleado, " + // 🔹 Se agrega la columna inicio_empleado
+                "    COALESCE((a.aportacion / (SELECT SUM(aportacion) FROM aportaciones WHERE año = ?)) * 100, 0) AS porcentaje_dividendos, " +
+                "    ROUND((a.aportacion * 0.10), 2) AS total_dividendos, " +
+                "    p.fecha_aprobacion AS fecha_solicitud, " +
+                "    COALESCE(p.monto_solicitado, 0.00) AS monto_solicitado, " +
+                "    COALESCE(p.plazo_pago, 0) AS plazo_meses, " +
+                "    COALESCE(p.tasa_interes, 0) AS tasa_interes, " +
+                "    ROUND(COALESCE(p.monto_solicitado * p.tasa_interes / 100, 0.00), 2) AS total_interes, " +
+                "    ROUND(COALESCE(p.letra_mensual, 0.00), 2) AS pago_mensual, " +
+                "    ROUND(COALESCE(p.monto_solicitado + (p.monto_solicitado * p.tasa_interes / 100), 0.00), 2) AS monto_total_pagar, " +
+                "    ROUND(COALESCE((p.monto_solicitado * p.tasa_interes / 100), 0.00), 2) AS total_acumulado " +
+                "FROM socios s " +
+                "LEFT JOIN aportaciones a ON s.id_empleado = a.id_empleado AND a.año = ? " +
+                "LEFT JOIN prestamos p ON s.id_empleado = p.id_empleado AND YEAR(p.fecha_aprobacion) = ? " +
+                "GROUP BY " +
+                "    s.id_empleado, s.nombres_empleado, s.apellidos_empleado, " +
+                "    s.inicio_empleado, " + // 🔹 Se asegura de incluir en el GROUP BY
+                "    p.fecha_aprobacion, p.monto_solicitado, p.plazo_pago, p.tasa_interes, a.aportacion, " +
+                "    p.letra_mensual " +
+                "ORDER BY s.id_empleado ASC";
 
         try (Connection conn = conexionBD.conectar();
              PreparedStatement ps = conn.prepareStatement(query)) {
@@ -246,24 +248,25 @@ public class consultas_reportes extends conexion {
             ps.setInt(3, anio);
 
             try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    Map<String, Object> fila = new HashMap<>();
-                    fila.put("codigo_socio", rs.getString("codigo_socio"));
-                    fila.put("nombre_completo", rs.getString("nombre_completo"));
-                    fila.put("aportacion_mensual", rs.getBigDecimal("aportacion_mensual"));
-                    fila.put("total_aportaciones", rs.getBigDecimal("total_aportaciones"));
-                    fila.put("porcentaje_dividendos", rs.getInt("porcentaje_dividendos"));
-                    fila.put("total_dividendos", rs.getBigDecimal("total_dividendos"));
-                    fila.put("fecha_solicitud", rs.getDate("fecha_solicitud"));
-                    fila.put("monto_solicitado", rs.getBigDecimal("monto_solicitado"));
-                    fila.put("plazo_meses", rs.getInt("plazo_meses"));
-                    fila.put("tasa_interes", rs.getInt("tasa_interes"));
-                    fila.put("total_interes", rs.getBigDecimal("total_interes"));
-                    fila.put("pago_mensual", rs.getBigDecimal("pago_mensual"));
-                    fila.put("monto_total_pagar", rs.getBigDecimal("monto_total_pagar"));
-                    fila.put("total_acumulado", rs.getBigDecimal("total_acumulado"));
-                    reporte.add(fila);
-                }
+            	while (rs.next()) {
+            	    Map<String, Object> fila = new HashMap<>();
+            	    fila.put("codigo_socio", rs.getString("codigo_socio"));
+            	    fila.put("nombre_completo", rs.getString("nombre_completo"));
+            	    fila.put("aportacion_mensual", rs.getBigDecimal("aportacion_mensual"));
+            	    fila.put("inicio_empleado", rs.getDate("inicio_empleado")); // 🔹 Recuperar correctamente la fecha de inicio
+            	    fila.put("porcentaje_dividendos", rs.getInt("porcentaje_dividendos"));
+            	    fila.put("total_dividendos", rs.getBigDecimal("total_dividendos"));
+            	    fila.put("fecha_solicitud", rs.getDate("fecha_solicitud"));
+            	    fila.put("monto_solicitado", rs.getBigDecimal("monto_solicitado"));
+            	    fila.put("plazo_meses", rs.getInt("plazo_meses"));
+            	    fila.put("tasa_interes", rs.getInt("tasa_interes"));
+            	    fila.put("total_interes", rs.getBigDecimal("total_interes"));
+            	    fila.put("pago_mensual", rs.getBigDecimal("pago_mensual"));
+            	    fila.put("monto_total_pagar", rs.getBigDecimal("monto_total_pagar"));
+            	    fila.put("total_acumulado", rs.getBigDecimal("total_acumulado"));
+            	    reporte.add(fila);
+            	}
+
             }
         } catch (Exception e) {
             e.printStackTrace();

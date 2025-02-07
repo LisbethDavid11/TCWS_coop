@@ -3,6 +3,8 @@ package reportes;
 import java.awt.Desktop;
 import java.io.File;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -115,7 +117,26 @@ public class reporte_general_anual_ext {
 	            ultimoCodigoSocio = codigoSocio;
 
 	            BigDecimal aportacion = convertirBigDecimal(fila.get("aportacion_mensual"));
-	            BigDecimal totalAportacion = convertirBigDecimal(fila.get("total_aportaciones"));
+	            
+	            //BigDecimal totalAportacion = convertirBigDecimal(fila.get("total_aportaciones"));
+	            
+	         // Obtener la fecha de inicio del socio en la cooperativa
+	            String fechaInicioStr = fila.get("inicio_empleado") != null ? fila.get("inicio_empleado").toString() : null;
+	            LocalDate fechaInicio = (fechaInicioStr != null && !fechaInicioStr.isEmpty()) ? LocalDate.parse(fechaInicioStr) : null;
+
+	            // Fecha actual hasta donde se calcula el reporte
+	            LocalDate fechaActual = LocalDate.now();
+
+	            // Calcular los meses de antigüedad en la cooperativa
+	            long mesesAntiguedad = (fechaInicio != null) ? ChronoUnit.MONTHS.between(fechaInicio.withDayOfMonth(1), fechaActual.withDayOfMonth(1)) : 0;
+
+	            // Si el socio ingresó después de la fecha del reporte, su antigüedad es 0
+	            mesesAntiguedad = Math.max(0, mesesAntiguedad);
+
+	            // Calcular "Total Aportaciones" basado en los meses de antigüedad y la aportación mensual
+	            BigDecimal totalAportacion = aportacion.multiply(new BigDecimal(mesesAntiguedad));
+
+	            
 	            BigDecimal dividendos = convertirBigDecimal(fila.get("total_dividendos"));
 	            BigDecimal montoSolicitado = convertirBigDecimal(fila.get("monto_solicitado"));
 	            BigDecimal interes = convertirBigDecimal(fila.get("total_interes"));
